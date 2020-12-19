@@ -1,0 +1,60 @@
+---
+title: "Clase 4"
+author: "Carla Ulloa Vera"
+date: "09-12-2020"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, message = FALSE)
+```
+
+# Modelos lineales mixtos
+
+```{r}
+library(tidyverse)
+library(broom.mixed)
+library(lme4)
+```
+
+Vamos a ocupar la base de datos CO2, es un experimento, plantas de distintos localidades, algunas enfriadas y otras no y se ponen a distintas concentraciones de co2, y se medirá cuánto co2 captan
+
+*leer la base de datos*
+```{r}
+data("CO2")
+```
+
+Gráfico muestra las distintas captaciones de CO2 de distintas plantas.
+
+```{r}
+ggplot(CO2, aes(x = conc, y = uptake)) + geom_point()
+```
+
+
+Si queremos cambiar el color de los punteros, por tipo de planta podemos usar el código.
+
+```{r}
+ggplot(CO2, aes(x = conc, y = uptake, color = Type)) + geom_point()
+```
+
+
+También tenemos un tratamiento experimental, que es lo del *enfriamiento*, podemos agregar esta variable al gráfico con el siguiente código:
+
+```{r}
+ggplot(CO2, aes(x = conc, y = uptake, color = Type)) + geom_point(aes(shape = Treatment)) +
+  theme_bw()
+```
+
+
+Tenemos otra variable que es *Planta*, esta es la bvariable del individuo, no debiera ser una variable predecible, es decir que la variedad de la planta no me explique la variación de captación de co2, no de forma predecible, ees decir es aleatoria, la podemos ver con el siguiente codigo:
+
+```{r}
+ggplot(CO2, aes(x = conc, y = uptake, color = Type)) + geom_point(aes(shape = Treatment)) +
+  geom_path(aes(group = Plant, lty = Treatment)) + theme_bw()
+```
+Para hacer un modelo lineal simple
+
+```{r}
+Fit1 = lm(uptake - conc + Type + Treatment, data = CO2)
+```
+
